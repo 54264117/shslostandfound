@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+    <head>
+        {% if title %}
+        <title>{{ title }} - SHS Lost and Found</title>
+        {% else %}
+        <title>Welcome to SHS Lost and Found</title>
+        {% endif %}
+    </head>
+    <body>
+        <div>
+            SHS Lost and Found:
+            <a href="{{ url_for('main.index') }}">Home</a>
+        </div>
+        <hr>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+  </body>
+</html>
