@@ -1,0 +1,10 @@
+<table>
+    <tr valign="top">
+        <td><a href="{{ url_for('main.found_item', id=found_item.id) }}">
+            <img src="{{ url_for('main.image_thumbnails', id=found_item.id, size='small') }}" alt="Found Item Thumbnail">
+        </a></td>
+        <td>
+            {{ found_item.title }}
+        </td>
+    </tr>
+</table>

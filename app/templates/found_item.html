@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>{{ found_item.title }}</h1>
+    <table>
+        <tr>
+            <td><a href="{{ url_for('main.images', id=found_item.id) }}">
+                <img src="{{ url_for('main.image_thumbnails', id=found_item.id, size='large') }}" alt="Found Item Image">
+            </a></td>
+            <td style="vertical-align: top; text-align: justify;">
+                <h2>Description:</h2>
+                <p>{{ found_item.description }}</p>
+            </td>
+        </tr>
+    </table>
+    {% if found_item.date_found %}
+        <p><strong>Date Found:</strong> {{ found_item.date_found.strftime('%Y-%m-%d') }}</p>
+    {% endif %}
+    {% if found_item.location_found %}
+        <p><strong>Location Found:</strong> {{ found_item.location_found }}</p>
+    {% endif %}
+{% endblock %}

@@ -3,7 +3,8 @@ from app.email import send_email
 
 
 def send_password_reset_email(user):
-    token = user.get_email_validation_token()
+    token = user.get_email_validation_token(
+        current_app.config['EMAIL_TOKEN_EXPIRATION'])
     send_email('[SMS Lost and Found] Reset Your Password',
                sender=current_app.config['MAIL_FROMADDRESS'],
                recipients=[user.email],
@@ -14,7 +15,8 @@ def send_password_reset_email(user):
 
 
 def send_validation_email(user):
-    token = user.get_email_validation_token()
+    token = user.get_email_validation_token(
+        current_app.config['EMAIL_TOKEN_EXPIRATION'])
     send_email('[SMS Lost and Found] Validate Your Email Address',
                sender=current_app.config['MAIL_FROMADDRESS'],
                recipients=[user.email],

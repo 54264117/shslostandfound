@@ -4,3 +4,5 @@
 app.db
 logs/*
 logs/shslostandfound.log
+app/static/uploads/*
+app/static/images/*

@@ -66,12 +66,14 @@ def register():
 @bp.route('/register/<token>', methods=['GET', 'POST'])
 def validate_email(token):
     if current_user.is_authenticated:
+        flash('You are already logged in')
         return redirect(url_for('main.index'))
     user = User.verify_email_validation_token(token)
     if not user:
         flash('Invalid or expired token')
         return redirect(url_for('main.index'))
     if user.status != UserStatus.PENDING:
+        flash('Your account is not pending validation')
         return redirect(url_for('main.index'))
     user.status = UserStatus.ACTIVE
     db.session.commit()

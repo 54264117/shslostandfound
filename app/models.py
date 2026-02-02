@@ -29,9 +29,12 @@ class User(UserMixin, db.Model):
         sa.Enum(UserStatus, native_enum=False, validate_strings=True),
         default=UserStatus.PENDING)
 
+    found_items: so.WriteOnlyMapped['FoundItem'] = so.relationship(
+        back_populates='reporter', cascade='all, delete-orphan')
+
     __table_args__ = (
         sa.CheckConstraint(
-            "status IN ('pending', 'active', 'inactive')",
+            "status IN ('PENDING', 'ACTIVE', 'INACTIVE')",
             name='check_user_status'),
     )
 
@@ -46,12 +49,16 @@ class User(UserMixin, db.Model):
             return False
         return check_password_hash(self.password_hash, password)
 
-    def get_email_validation_token(self, expires_in: int = 600) -> str:
+    def get_email_validation_token(
+            self, expires_in: int) -> str:
         return jwt.encode(
             {'validate_email': self.id, 'exp': time() + expires_in},
             current_app.config['SECRET_KEY'],
             algorithm='HS256'
         )
+
+    def set_admin(self, is_admin: bool) -> None:
+        self.is_admin = is_admin
 
     @staticmethod
     def verify_email_validation_token(token: str) -> Optional['User']:
@@ -69,3 +76,35 @@ class User(UserMixin, db.Model):
 @login.user_loader
 def load_user(id):
     return db.session.get(User, int(id))
+
+
+class FoundItemStatus(Enum):
+    REVIEW = 'review'
+    PUBLISHED = 'published'
+    CLOSED = 'closed'
+
+
+class FoundItem(db.Model):
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    title: so.Mapped[str] = so.mapped_column(sa.String(140))
+    description: so.Mapped[Optional[str]] = so.mapped_column(sa.Text)
+    date_found: so.Mapped[Optional[datetime]] = so.mapped_column(
+        default=lambda: datetime.now(timezone.utc))
+    location_found: so.Mapped[Optional[str]] = so.mapped_column(sa.String(140))
+    image_filename: so.Mapped[Optional[str]] = so.mapped_column(sa.String(140))
+    user_id: so.Mapped[int] = so.mapped_column(
+        sa.Integer, sa.ForeignKey('user.id'))
+    status: so.Mapped[FoundItemStatus] = so.mapped_column(
+        sa.Enum(FoundItemStatus, native_enum=False, validate_strings=True),
+        default=FoundItemStatus.REVIEW)
+
+    reporter: so.Mapped[User] = so.relationship(back_populates='found_items')
+
+    __table_args__ = (
+        sa.CheckConstraint(
+            "status IN ('REVIEW', 'PUBLISHED', 'CLOSED')",
+            name='check_found_item_status'),
+    )
+
+    def __repr__(self) -> str:
+        return f'<FoundItem {self.title} by User {self.user_id}>'

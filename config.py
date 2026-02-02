@@ -16,5 +16,11 @@ class Config:
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     MAIL_FROMADDRESS = os.environ.get('MAIL_FROMADDRESS')
     ADMINS = ['liam@lockwd.com']
-    POSTS_PER_PAGE = 9
-    EMAIL_TOKEN_EXPIRATION = 60
+    ITEMS_PER_PAGE = 3
+    EMAIL_TOKEN_EXPIRATION = 600
+    MAX_CONTENT_LENGTH = 10 * 1024 * 1024
+    IMAGE_FOLDER = 'images/'
+    THUMBNAIL_MEDIA_ROOT = 'static/images/'
+    THUMBNAIL_MEDIA_URL = 'images/'
+
+    SERVER_NAME = os.environ.get('SERVER_NAME') or 'localhost:5000'
