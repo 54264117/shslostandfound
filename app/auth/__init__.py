@@ -1,9 +1,5 @@
-from flask import Flask
+from flask import Blueprint
 
+bp = Blueprint('auth', __name__)
 
-app = Flask(__name__)
-
-from app.errors import bp as errors_bp
-app.register_blueprint(errors_bp)
-
-from app import routes, models
+from app.auth import routes

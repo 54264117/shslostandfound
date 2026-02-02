@@ -17,3 +17,4 @@ class Config:
     MAIL_FROMADDRESS = os.environ.get('MAIL_FROMADDRESS')
     ADMINS = ['liam@lockwd.com']
     POSTS_PER_PAGE = 9
+    EMAIL_TOKEN_EXPIRATION = 60
