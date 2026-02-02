@@ -2,25 +2,30 @@
 <html>
     <head>
         {% if title %}
-        <title>{{ title }} - SHS Lost and Found</title>
+            <title>{{ title }} - SHS Lost and Found</title>
         {% else %}
-        <title>Welcome to SHS Lost and Found</title>
+            <title>Welcome to SHS Lost and Found</title>
         {% endif %}
     </head>
     <body>
         <div>
             SHS Lost and Found:
             <a href="{{ url_for('main.index') }}">Home</a>
+            {% if current_user.is_anonymous %}
+                <a href="{{ url_for('auth.login') }}">Login</a>
+            {% else %}
+                <a href="{{ url_for('auth.logout') }}">Logout</a>
+            {% endif %}
         </div>
         <hr>
         {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <ul>
-            {% for message in messages %}
-            <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
+            {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
         {% endwith %}
         {% block content %}{% endblock %}
   </body>
