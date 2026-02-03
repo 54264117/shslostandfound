@@ -19,4 +19,14 @@
     {% if found_item.location_found %}
         <p><strong>Location Found:</strong> {{ found_item.location_found }}</p>
     {% endif %}
+    {% if current_user == found_item.reporter or current_user.is_admin %}
+        <form action="{{ url_for('main.update_found_item', id=found_item.id) }}" method="get">
+            <button type="submit">Edit Found Item</button>
+        </form>
+    {% endif %}
+    {% if current_user.is_admin and found_item.status.value == 'review' %}
+        <form method="POST" action="{{ url_for('main.publish_found_item', id=found_item.id) }}">
+            <button type="submit">Publish Found Item</button>
+        </form>
+    {% endif %}
 {% endblock %}

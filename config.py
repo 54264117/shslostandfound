@@ -20,6 +20,7 @@ class Config:
     EMAIL_TOKEN_EXPIRATION = 600
     MAX_CONTENT_LENGTH = 10 * 1024 * 1024
     IMAGE_FOLDER = 'images/'
+    RESOURCES_FOLDER = 'resources/'
     THUMBNAIL_MEDIA_ROOT = 'static/images/'
     THUMBNAIL_MEDIA_URL = 'images/'
 

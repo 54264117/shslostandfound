@@ -65,14 +65,14 @@ def add_found_item():
 def found_item(id):
     found_item = FoundItem.query.get_or_404(id)
     return render_template('found_item.html', title='Found Item Details',
-                           found_item=found_item)
+                           found_item=found_item, current_user=current_user)
 
 
 @bp.route('/found_item/<int:id>/update', methods=['GET', 'POST'])
 @login_required
 def update_found_item(id):
     found_item = FoundItem.query.get_or_404(id)
-    if found_item.reporter != current_user:
+    if found_item.reporter != current_user and not current_user.is_admin:
         flash('You are not authorized to update this found item.')
         return redirect(url_for('main.found_item', id=id))
     form = FoundItemForm()
@@ -97,7 +97,22 @@ def update_found_item(id):
         form.date_found.data = found_item.date_found.date() \
             if found_item.date_found else None
         form.location_found.data = found_item.location_found
-    return render_template('edit_found_item.html', title='Update Found Item', form=form)
+
+    return render_template('edit_found_item.html', title='Update Found Item',
+                           form=form, reporter=found_item.reporter)
+
+
+@bp.route('/found_item/<int:id>/publish', methods=['POST'])
+@login_required
+def publish_found_item(id):
+    found_item = FoundItem.query.get_or_404(id)
+    if not current_user.is_admin:
+        flash('You are not authorized to publish this found item.')
+        return redirect(url_for('main.found_item', id=id))
+    found_item.status = FoundItemStatus.PUBLISHED
+    db.session.commit()
+    flash('Found item published successfully!')
+    return redirect(url_for('main.found_item', id=id))
 
 
 @bp.route('/images/<id>')
@@ -120,3 +135,14 @@ def image_thumbnails(id, size):
                     id,
                     f'thumb_{size}')
     return send_from_directory(filepath, 'thumb.jpg')
+
+
+@bp.route('/res/<path:filename>')
+def resources(filename):
+    if current_app.static_folder is None:
+        return "Static folder not configured", 404
+    filepath = Path(current_app.static_folder,
+                    current_app.config['RESOURCES_FOLDER'])
+    return send_from_directory(filepath, filename)
+    # flash(Path(filepath, filename).as_posix())
+    # return redirect(url_for('main.index'))  # Placeholder to avoid broken links

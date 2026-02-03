@@ -57,9 +57,6 @@ class User(UserMixin, db.Model):
             algorithm='HS256'
         )
 
-    def set_admin(self, is_admin: bool) -> None:
-        self.is_admin = is_admin
-
     @staticmethod
     def verify_email_validation_token(token: str) -> Optional['User']:
         try:
